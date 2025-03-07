@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                             https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <groupId>com.example</groupId>
+    <artifactId>sip-validator</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>SIP Header Validator</name>
+    <description>Spring Boot application to validate SIP headers using JAIN-SIP</description>
+    
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.4.3</version>
+        <relativePath/>
+    </parent>
+    
+    <properties>
+        <java.version>22</java.version>
+        <jain-sip-api.version>1.2.1.4</jain-sip-api.version>
+        <jain-sip-ri.version>1.3.0-91</jain-sip-ri.version>
+    </properties>
+    
+    <dependencies>
+        <!-- Spring Boot Web -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        
+        <!-- Thymeleaf for HTML templating -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+        
+        <!-- JAIN-SIP API -->
+        <dependency>
+            <groupId>javax.sip</groupId>
+            <artifactId>jain-sip-api</artifactId>
+            <version>${jain-sip-api.version}</version>
+        </dependency>
+        
+        <!-- JAIN-SIP NIST implementation -->
+        <dependency>
+            <groupId>javax.sip</groupId>
+            <artifactId>jain-sip-ri</artifactId>
+            <version>${jain-sip-ri.version}</version>
+        </dependency>
+        
+        <!-- Testing -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+    
+    <repositories>
+        <!-- NIST repository for JAIN-SIP -->
+        <repository>
+            <id>nist-maven</id>
+            <url>https://maven.nist.gov/nexus/content/repositories/public/</url>
+        </repository>
+    </repositories>
+</project>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>SIP Header Validator</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .header-example {
+            font-family: monospace;
+            background-color: #f8f9fa;
+            padding: 5px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">SIP Header Validator</h1>
+        <p class="text-center">Verify if your SIP messages or headers comply with the SIP standard (RFC 3261)</p>
+        
+        <div class="row mt-4">
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Validate SIP Message</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="messageText" class="form-label">SIP Request or Response</label>
+                            <textarea class="form-control" id="messageText" rows="14" 
+                                      placeholder="e.g., INVOKE sip:..."></textarea>
+                            <div class="form-text">Enter the complete SIP message including header and body</header></div>
+                        </div>
+                        <button class="btn btn-primary" onclick="validateFullMessage()">Validate</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Validate SIP Header</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="headerText" class="form-label">Header Text</label>
+                            <input type="text" class="form-control" id="headerText" 
+                                   placeholder="e.g., Call-ID: a84b4c76e66710@192.168.1.2">
+                            <div class="form-text">Enter the complete header with name and value</div>
+                        </div>
+                        <button class="btn btn-primary" onclick="validateHeader()">Validate</button>
+                    </div>
+                </div>
+ 
+            </div>
+        </div>
+        
+        <div class="mt-4" id="result" style="display: none;">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5>Validation Result</h5>
+                    <span id="validationStatus" class="badge"></span>
+                </div>
+                <div class="card-body">
+                    <div id="messagesList"></div>
+                    <div id="errorsList" class="text-danger"></div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function validateFullMessage() {
+            const messageText = document.getElementById('messageText').value;
+            if (!messageText) {
+                alert('Please enter message text');
+                return;
+            }
+            
+            fetch('/api/sip/validate/message', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    messageText: messageText
+                })
+            })
+            .then(response => response.json())
+            .then(data => displayResult(data))
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred during validation');
+            });
+        }
+
+        function validateHeader() {
+            const headerText = document.getElementById('headerText').value;
+            if (!headerText) {
+                alert('Please enter header text');
+                return;
+            }
+            
+            fetch('/api/sip/validate/header', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    headerText: headerText
+                })
+            })
+            .then(response => response.json())
+            .then(data => displayResult(data))
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred during validation');
+            });
+        }
+        
+        function displayResult(data) {
+            const resultDiv = document.getElementById('result');
+            const validationStatus = document.getElementById('validationStatus');
+            const messagesList = document.getElementById('messagesList');
+            const errorsList = document.getElementById('errorsList');
+            
+            resultDiv.style.display = 'block';
+            
+            // Clear previous results
+            messagesList.innerHTML = '';
+            errorsList.innerHTML = '';
+            
+            // Set validation status
+            if (data.valid) {
+                validationStatus.textContent = 'VALID';
+                validationStatus.classList.remove('bg-danger');
+                validationStatus.classList.add('bg-success');
+            } else {
+                validationStatus.textContent = 'INVALID';
+                validationStatus.classList.remove('bg-success');
+                validationStatus.classList.add('bg-danger');
+            }
+            
+            // Display messages
+            if (data.messages && data.messages.length > 0) {
+                const ul = document.createElement('ul');
+                data.messages.forEach(message => {
+                    const li = document.createElement('li');
+                    li.textContent = message;
+                    ul.appendChild(li);
+                });
+                messagesList.appendChild(ul);
+            }
+            
+            // Display errors
+            if (data.errors && data.errors.length > 0) {
+                const ul = document.createElement('ul');
+                data.errors.forEach(error => {
+                    const li = document.createElement('li');
+                    li.textContent = error;
+                    ul.appendChild(li);
+                });
+                errorsList.appendChild(ul);
+            }
+        }
+    </script>
+</body>
+</html>
