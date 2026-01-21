@@ -30,6 +30,7 @@ public class SipValidatorRestController {
             response.setValid(result.isValid());
             response.setMessages(result.getMessages());
             response.setErrors(result.getErrors());
+            response.setHeaders(result.getHeaders());
         } else {
             response.setValid(false);
             response.getErrors().add("Request must include messageText");
@@ -50,6 +51,7 @@ public class SipValidatorRestController {
             response.setValid(result.isValid());
             response.setMessages(result.getMessages());
             response.setErrors(result.getErrors());
+            response.setHeaders(result.getHeaders());
         } else {
             response.setValid(false);
             response.getErrors().add("Request must include either headerText");
